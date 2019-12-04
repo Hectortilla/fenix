@@ -5,10 +5,10 @@ using System;
 
 public class NetworkPing : MonoBehaviour
 {
-    private Action<object> actionPongHeard;
+    private Action<string> actionPongHeard;
 
     void Awake () {
-        this.actionPongHeard = new Action<object>(this.PongHeard);
+        this.actionPongHeard = new Action<string>(this.PongHeard);
     }
 
     void OnEnable () {
@@ -20,15 +20,20 @@ public class NetworkPing : MonoBehaviour
         {
             WSConnection.SendMessage(JsonUtility.ToJson(new Ping()));
         }
-        // WSConnection.SendMessage(JsonUtility.ToJson(new Ping()));
     }
 
-    void PongHeard(object data) {
-        Debug.Log(data);
+    void PongHeard(string data) {
+        ResponsePing responsePing = JsonUtility.FromJson<ResponsePing>(data);
+        Debug.Log(responsePing.message);
     }
 }
 
 [System.Serializable]
 public class Ping {
     public string action = "ping";
+}
+
+[System.Serializable]
+public class ResponsePing {
+    public string message;
 }

@@ -25,7 +25,7 @@ public static class WSConnection
     async static void Init() {
         await wsClient.ConnectAsync(new Uri(serverHost), WSConnection.cToken);
 
-        Task.Factory.StartNew(
+        var ignoredBackgroundTask = Task.Factory.StartNew(
             async () => {
                 var rcvBytes = new byte[128];
                 var rcvBuffer = new ArraySegment<byte>(rcvBytes);
@@ -33,12 +33,7 @@ public static class WSConnection
                     WebSocketReceiveResult rcvResult = await wsClient.ReceiveAsync(rcvBuffer, WSConnection.cToken);
                     byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(rcvResult.Count).ToArray();
                     string rcvMsg = Encoding.UTF8.GetString(msgBytes);
-                    Debug.Log(rcvMsg);
                     NetworkMessage d = JsonUtility.FromJson<NetworkMessage>(rcvMsg);
-                    Debug.Log(">>>>>>");
-                    Debug.Log(d.action);
-                    Debug.Log(d.data);
-                    Debug.Log("<<<<<<");
                     EventManager.TriggerEvent(d.action, d.data);
                 }
             }, WSConnection.cToken, TaskCreationOptions.LongRunning, TaskScheduler.Default
@@ -58,5 +53,5 @@ public static class WSConnection
 public class NetworkMessage {
     public int code;
     public string action;
-    public object data;
+    public string data;
 }
