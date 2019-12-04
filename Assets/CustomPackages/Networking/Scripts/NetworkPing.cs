@@ -12,7 +12,7 @@ public class NetworkPing : MonoBehaviour
     }
 
     void OnEnable () {
-        EventManager.StartListening("pong", this.actionPongHeard);
+        EventManager.StartListening("PONG", this.actionPongHeard);
     }
 
     void Update () {
@@ -23,8 +23,8 @@ public class NetworkPing : MonoBehaviour
         // WSConnection.SendMessage(JsonUtility.ToJson(new Ping()));
     }
 
-    void PongHeard(object res) {
-        Debug.Log(res);
+    void PongHeard(object data) {
+        Debug.Log(data);
     }
 }
 

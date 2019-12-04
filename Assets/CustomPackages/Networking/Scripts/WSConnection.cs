@@ -33,8 +33,13 @@ public static class WSConnection
                     WebSocketReceiveResult rcvResult = await wsClient.ReceiveAsync(rcvBuffer, WSConnection.cToken);
                     byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(rcvResult.Count).ToArray();
                     string rcvMsg = Encoding.UTF8.GetString(msgBytes);
-                    dynamic stuff = JsonConvert.DeserializeObject("{ 'Name': 'Jon Smith', 'Address': { 'City': 'New York', 'State': 'NY' }, 'Age': 42 }");
-                    EventManager.TriggerEvent("pong", "whatever");
+                    Debug.Log(rcvMsg);
+                    NetworkMessage d = JsonUtility.FromJson<NetworkMessage>(rcvMsg);
+                    Debug.Log(">>>>>>");
+                    Debug.Log(d.action);
+                    Debug.Log(d.data);
+                    Debug.Log("<<<<<<");
+                    EventManager.TriggerEvent(d.action, d.data);
                 }
             }, WSConnection.cToken, TaskCreationOptions.LongRunning, TaskScheduler.Default
         );
@@ -47,5 +52,11 @@ public static class WSConnection
             await WSConnection.wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: WSConnection.cToken);
         }
     }
+}
 
+[System.Serializable]
+public class NetworkMessage {
+    public int code;
+    public string action;
+    public object data;
 }
