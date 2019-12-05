@@ -1,14 +1,11 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
 using System.Linq;
 using System.Text;
-
 
 // https://itq.nl/net-4-5-websocket-client-without-a-browser/
 public static class WSConnection
@@ -24,22 +21,24 @@ public static class WSConnection
 
     async static void Init() {
         await wsClient.ConnectAsync(new Uri(serverHost), WSConnection.cToken);
-
-        var ignoredBackgroundTask = Task.Factory.StartNew(
-            async () => {
-                var rcvBytes = new byte[128];
-                var rcvBuffer = new ArraySegment<byte>(rcvBytes);
-                while (true) {
-                    WebSocketReceiveResult rcvResult = await wsClient.ReceiveAsync(rcvBuffer, WSConnection.cToken);
-                    byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(rcvResult.Count).ToArray();
-                    string rcvMsg = Encoding.UTF8.GetString(msgBytes);
-                    NetworkMessage d = JsonUtility.FromJson<NetworkMessage>(rcvMsg);
-                    EventManager.TriggerEvent(d.action, d.data);
-                }
-            }, WSConnection.cToken, TaskCreationOptions.LongRunning, TaskScheduler.Default
-        );
+        Thread oThread = new Thread(WSConnection.ReadWS);
+        oThread.Start();
+        oThread.IsBackground = true;
         init = true;
     }
+
+    async static void ReadWS() {
+        var rcvBytes = new byte[128];
+        var rcvBuffer = new ArraySegment<byte>(rcvBytes);
+        while (true) {
+            WebSocketReceiveResult rcvResult = await wsClient.ReceiveAsync(rcvBuffer, WSConnection.cToken);
+            byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(rcvResult.Count).ToArray();
+            string rcvMsg = Encoding.UTF8.GetString(msgBytes);
+            NetworkMessage d = JsonUtility.FromJson<NetworkMessage>(rcvMsg);
+            EventManager.TriggerEvent(d.action, d.data);
+        }
+    }
+
     async public static void SendMessage(string message) {
         if (WSConnection.init) {
             byte[] sendBytes = Encoding.UTF8.GetBytes(message);
