@@ -3,7 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class EventManager {
+public class EventManager : MonoBehaviour {
+    
+    private static EventManager _instance;
+
+    public static EventManager Instance { get { return _instance; } }
+
+    private void Awake() {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        } else {
+            _instance = this;
+        }
+    }
+
+    private void Update() {
+        NetworkMessage msg = MessageQueue.DequeueMessage(); // Should we make this async?
+        if (msg != null) {
+            EventManager.TriggerEvent(msg.action, msg.data);
+        }
+    }
 
     private static Dictionary<string, Action<string>> eventDictionary;
 

@@ -34,8 +34,9 @@ public static class WSConnection
             WebSocketReceiveResult rcvResult = await wsClient.ReceiveAsync(rcvBuffer, WSConnection.cToken);
             byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(rcvResult.Count).ToArray();
             string rcvMsg = Encoding.UTF8.GetString(msgBytes);
-            NetworkMessage d = JsonUtility.FromJson<NetworkMessage>(rcvMsg);
-            EventManager.TriggerEvent(d.action, d.data);
+            NetworkMessage msg = JsonUtility.FromJson<NetworkMessage>(rcvMsg);
+            MessageQueue.EnqueueMessage(msg);
+            // EventManager.TriggerEvent(msg.action, msg.data);
         }
     }
 

@@ -23,8 +23,14 @@ public class NetworkPing : MonoBehaviour
     }
 
     void PongHeard(string data) {
-        ResponsePing responsePing = JsonUtility.FromJson<ResponsePing>(data);
-        Debug.Log(responsePing.message);
+        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.position = new Vector3(
+            UnityEngine.Random.Range(-3.0f, 3.0f),
+            UnityEngine.Random.Range(-3.0f, 3.0f),
+            UnityEngine.Random.Range(-3.0f, 3.0f)
+        );
+        // ResponsePing responsePing = JsonUtility.FromJson<ResponsePing>(data);
+        // Debug.Log(responsePing.message);
     }
 }
 
