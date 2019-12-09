@@ -12,7 +12,7 @@ public class NetworkPing : MonoBehaviour
     }
 
     void OnEnable () {
-        EventManager.StartListening("PONG", this.actionPongHeard);
+        NetworkEventManager.StartListening("PONG", this.actionPongHeard);
     }
 
     void Update () {
