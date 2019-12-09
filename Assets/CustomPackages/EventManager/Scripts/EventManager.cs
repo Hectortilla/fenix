@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NetworkEventManager : MonoBehaviour {
-    
-    private static NetworkEventManager _instance;
+public class EventManager : MonoBehaviour {
+    // Singleton pattern ------- >    
+    private static EventManager _instance;
 
-    public static NetworkEventManager Instance { get { return _instance; } }
+    public static EventManager Instance { get { return _instance; } }
 
     private void Awake() {
         if (_instance != null && _instance != this)
@@ -17,19 +17,11 @@ public class NetworkEventManager : MonoBehaviour {
             _instance = this;
         }
     }
-
-    private void Update() {
-        NetworkMessage msg = WSConnection.GetMessage(); // Should we make this async?
-        if (msg != null) {
-            NetworkEventManager.TriggerEvent(msg.action, msg.data);
-        }
-    }
-
     private static Dictionary<string, Action<string>> eventDictionary;
-
-    static NetworkEventManager() {
-        NetworkEventManager.Init();
+    static EventManager() {
+        EventManager.Init();
     }
+    // < -------------------------
 
     static void Init()
     {
@@ -42,35 +34,35 @@ public class NetworkEventManager : MonoBehaviour {
     public static void StartListening(string eventName, Action<string> listener)
     {
         Action<string> thisEvent;
-        if (NetworkEventManager.eventDictionary.TryGetValue(eventName, out thisEvent))
+        if (EventManager.eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             thisEvent += listener;
-            NetworkEventManager.eventDictionary[eventName] = thisEvent;
+            EventManager.eventDictionary[eventName] = thisEvent;
         }
         else
         {
             thisEvent += listener;
-            NetworkEventManager.eventDictionary.Add(eventName, thisEvent);
+            EventManager.eventDictionary.Add(eventName, thisEvent);
         }
     }
 
     public static void StopListening(string eventName, Action<string> listener)
     {
         Action<string> thisEvent;
-        if (NetworkEventManager.eventDictionary.TryGetValue(eventName, out thisEvent))
+        if (EventManager.eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             thisEvent -= listener;
-            NetworkEventManager.eventDictionary[eventName] = thisEvent;
+            EventManager.eventDictionary[eventName] = thisEvent;
         }
     }
 
     public static void TriggerEvent(string eventName, string param)
     {
         Action<string> thisEvent = null;
-        if (NetworkEventManager.eventDictionary.TryGetValue(eventName, out thisEvent))
+        if (EventManager.eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             thisEvent.Invoke(param);
-            // OR USE  NetworkEventManager.eventDictionary[eventName](eventParam);
+            // OR USE  EventManager.eventDictionary[eventName](eventParam);
         }
     }
 }

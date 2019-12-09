@@ -1,23 +1,44 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+using System.Linq;
 using System.Net.WebSockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine;
 
-using System.Linq;
-using System.Text;
 
 // https://itq.nl/net-4-5-websocket-client-without-a-browser/
-public static class WSConnection
-{
+public class WSConnection : MonoBehaviour {
+    
     static string serverHost = "ws://localhost:9000/";
     static ClientWebSocket wsClient = new ClientWebSocket();
     static CancellationToken cToken = new CancellationTokenSource().Token;
-    private static AsyncQueue<NetworkMessage> queue = new AsyncQueue<NetworkMessage>();
-    private static bool init = false;
+    static AsyncQueue<NetworkMessage> queue = new AsyncQueue<NetworkMessage>();
+    static bool init = false;
 
+    // Singleton pattern ------- >
+    static WSConnection _instance;
+
+    public static WSConnection Instance { get { return _instance; } }
+
+    void Awake() {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        } else {
+            _instance = this;
+        }
+    }
     static WSConnection() {
         WSConnection.Init();
+    }
+    // < -------------------------
+
+    void Update() {
+        NetworkMessage msg = GetMessage();
+        if (msg != null) {
+            EventManager.TriggerEvent(msg.action, msg.data);
+        }
     }
 
     async static void Init() {
@@ -41,7 +62,7 @@ public static class WSConnection
         }
     }
 
-    async public static void SendMessage(string message) {
+    async static public void SendMessage(string message) {
         if (init) {
             byte[] sendBytes = Encoding.UTF8.GetBytes(message);
             var sendBuffer = new ArraySegment<byte>(sendBytes);
