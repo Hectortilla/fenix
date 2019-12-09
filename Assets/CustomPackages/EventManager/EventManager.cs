@@ -19,7 +19,7 @@ public class EventManager : MonoBehaviour {
     }
 
     private void Update() {
-        NetworkMessage msg = MessageQueue.DequeueMessage(); // Should we make this async?
+        NetworkMessage msg = WSConnection.GetMessage(); // Should we make this async?
         if (msg != null) {
             EventManager.TriggerEvent(msg.action, msg.data);
         }
