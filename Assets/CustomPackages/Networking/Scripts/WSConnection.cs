@@ -63,7 +63,9 @@ public class WSConnection : MonoBehaviour {
     }
 
     async static public void SendMessage(string message) {
+        Debug.Log(message);
         if (init) {
+            Debug.Log("sending");
             byte[] sendBytes = Encoding.UTF8.GetBytes(message);
             var sendBuffer = new ArraySegment<byte>(sendBytes);
             await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: WSConnection.cToken);
