@@ -28,9 +28,13 @@ public class NetworkEntity : MonoBehaviour
     void Start()
     {
         name = Utilities.GenerateName(4, 10);
+        StartCoroutine(Auth());
+    }
+    IEnumerator Auth()
+    {
+        yield return new WaitUntil(() => WSConnection.init);
         WSConnection.SendMessage(JsonUtility.ToJson(new AuthMessage(name)));
     }
-
     void ReceivedAuth(string data) {
         Debug.Log("Authenticated as " + name + "!");
     }

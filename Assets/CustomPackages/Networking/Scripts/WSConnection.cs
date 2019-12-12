@@ -14,7 +14,7 @@ public class WSConnection : MonoBehaviour {
     static ClientWebSocket wsClient = new ClientWebSocket();
     static CancellationToken cToken = new CancellationTokenSource().Token;
     static AsyncQueue<NetworkMessage> queue = new AsyncQueue<NetworkMessage>();
-    static bool init = false;
+    public static bool init = false;
 
     // Singleton pattern ------- >
     static WSConnection _instance;
@@ -37,6 +37,8 @@ public class WSConnection : MonoBehaviour {
     void Update() {
         NetworkMessage msg = GetMessage();
         if (msg != null) {
+            Debug.Log(msg.action);
+            Debug.Log(msg.data);
             EventManager.TriggerEvent(msg.action, msg.data);
         }
     }
@@ -63,9 +65,7 @@ public class WSConnection : MonoBehaviour {
     }
 
     async static public void SendMessage(string message) {
-        Debug.Log(message);
         if (init) {
-            Debug.Log("sending");
             byte[] sendBytes = Encoding.UTF8.GetBytes(message);
             var sendBuffer = new ArraySegment<byte>(sendBytes);
             await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: WSConnection.cToken);
