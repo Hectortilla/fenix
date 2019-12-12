@@ -5,7 +5,7 @@ using System;
 
 public class NetworkEntity : MonoBehaviour
 {
-	string name;
+	string playerName;
 	
 	List<Player> players;
 
@@ -27,23 +27,25 @@ public class NetworkEntity : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        name = Utilities.GenerateName(4, 10);
+        playerName = Utilities.GenerateName(4, 10);
         StartCoroutine(Auth());
     }
     IEnumerator Auth()
     {
         yield return new WaitUntil(() => WSConnection.init);
-        WSConnection.SendMessage("auth", new AuthMessage(name));
+        WSConnection.SendMessage("auth", new AuthMessage(playerName));
     }
     void ReceivedAuth(string data) {
-        Debug.Log("Authenticated as " + name + "!");
+        Debug.Log("Authenticated as " + playerName + "!");
     }
 
     void ReceivedGamePlayers(string data) {
+        Debug.Log("ReceivedGamePlayers");
     	players = JsonUtility.FromJson<PlayerList>(data).players;
     }
 
 	void ReceivedPlayerJoined(string data) {
+        Debug.Log("ReceivedPlayerJoined");
     	players.Add(JsonUtility.FromJson<Player>(data));
 
 	}
