@@ -13,7 +13,7 @@ public class WSConnection : MonoBehaviour {
     static string serverHost = "ws://localhost:9000/";
     static ClientWebSocket wsClient = new ClientWebSocket();
     static CancellationToken cToken = new CancellationTokenSource().Token;
-    static AsyncQueue<NetworkMessage> queue = new AsyncQueue<NetworkMessage>();
+    static AsyncQueue<IncomingNetworkMessage> queue = new AsyncQueue<IncomingNetworkMessage>();
     public static bool init = false;
 
     // Singleton pattern ------- >
@@ -35,7 +35,7 @@ public class WSConnection : MonoBehaviour {
     // < -------------------------
 
     void Update() {
-        NetworkMessage msg = GetMessage();
+        IncomingNetworkMessage msg = GetMessage();
         if (msg != null) {
             Debug.Log(msg.action);
             Debug.Log(msg.data);
@@ -58,28 +58,40 @@ public class WSConnection : MonoBehaviour {
             WebSocketReceiveResult rcvResult = await wsClient.ReceiveAsync(rcvBuffer, cToken);
             byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(rcvResult.Count).ToArray();
             string rcvMsg = Encoding.UTF8.GetString(msgBytes);
-            NetworkMessage msg = JsonUtility.FromJson<NetworkMessage>(rcvMsg);
+            IncomingNetworkMessage msg = JsonUtility.FromJson<IncomingNetworkMessage>(rcvMsg);
             queue.Enqueue(msg);
             // EventManager.TriggerEvent(msg.action, msg.data);
         }
     }
 
-    async static public void SendMessage(string message) {
+    async static public void SendMessage(string action, object data) {
         if (init) {
-            byte[] sendBytes = Encoding.UTF8.GetBytes(message);
+            byte[] sendBytes = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new OutgoingNetworkMessage(action, JsonUtility.ToJson(data))));
             var sendBuffer = new ArraySegment<byte>(sendBytes);
             await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: WSConnection.cToken);
         }
     }
-    public static NetworkMessage GetMessage() {
+    public static IncomingNetworkMessage GetMessage() {
         return queue.Dequeue();
     }
 
 }
 
 [System.Serializable]
-public class NetworkMessage {
+public class IncomingNetworkMessage {
     public int code;
     public string action;
     public string data;
+}
+
+
+[System.Serializable]
+public class OutgoingNetworkMessage {
+    public string action;
+    public string data;
+
+    public OutgoingNetworkMessage(string _action, string _data){
+        action = _action;
+        data = _data;
+    }
 }

@@ -30,7 +30,7 @@ public class NetworkTransform : MonoBehaviour
 
         if (Time.time > nextActionTime ) {
             nextActionTime += period;
-            WSConnection.SendMessage(JsonUtility.ToJson(transformMessage));
+            WSConnection.SendMessage(transformMessage.action, transformMessage);
         }
     }
     void PlayerMoved(string data) {
@@ -44,26 +44,3 @@ public class NetworkTransform : MonoBehaviour
         // Debug.Log(responsePing.message);
     }
 }
-
-[System.Serializable]
-public class TransformMessage
-{
-    public string action = "move";
-    public float px;
-    public float py;
-    public float pz;
-
-    public float rx;
-    public float ry;
-    public float rz;
-
-    public TransformMessage(float _px, float _py, float _pz, float _rx, float _ry, float _rz) {
-        px = _px;
-        py = _py;
-        pz = _pz;
-        rx = _rx;
-        ry = _ry;
-        rz = _rz;
-    }
-}
-

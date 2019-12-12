@@ -18,7 +18,7 @@ public class NetworkPing : MonoBehaviour
     void Update () {
         if (Input.GetKeyDown("p"))
         {
-            WSConnection.SendMessage(JsonUtility.ToJson(new Ping()));
+            WSConnection.SendMessage("ping", new Ping());
         }
     }
 
@@ -32,14 +32,4 @@ public class NetworkPing : MonoBehaviour
         // ResponsePing responsePing = JsonUtility.FromJson<ResponsePing>(data);
         // Debug.Log(responsePing.message);
     }
-}
-
-[System.Serializable]
-public class Ping {
-    public string action = "ping";
-}
-
-[System.Serializable]
-public class ResponsePing {
-    public string message;
 }

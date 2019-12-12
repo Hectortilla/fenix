@@ -33,7 +33,7 @@ public class NetworkEntity : MonoBehaviour
     IEnumerator Auth()
     {
         yield return new WaitUntil(() => WSConnection.init);
-        WSConnection.SendMessage(JsonUtility.ToJson(new AuthMessage(name)));
+        WSConnection.SendMessage("auth", new AuthMessage(name));
     }
     void ReceivedAuth(string data) {
         Debug.Log("Authenticated as " + name + "!");
@@ -50,22 +50,11 @@ public class NetworkEntity : MonoBehaviour
 }
 
 [System.Serializable]
-public class AuthMessage
-{
-    public string action = "auth";
-    public string name;
-    public AuthMessage (string _name) {
-    	name = _name;
-    }
-}
-
-[System.Serializable]
 public class Player
 {
     public string key;
     public string name;
 }
-
 
 [System.Serializable]
 public class PlayerList
