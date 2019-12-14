@@ -40,7 +40,7 @@ public class NetworkEntity : MonoBehaviour
     }
 
     void ReceivedGamePlayers(string data) {
-        Debug.Log("ReceivedGamePlayers");
+        Debug.Log("ReceivedGamePlayers")	;
     	players = JsonUtility.FromJson<PlayerList>(data).players;
     }
 

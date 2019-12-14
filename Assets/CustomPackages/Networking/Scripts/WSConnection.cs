@@ -37,8 +37,6 @@ public class WSConnection : MonoBehaviour {
     void Update() {
         IncomingNetworkMessage msg = GetMessage();
         if (msg != null) {
-            Debug.Log(msg.action);
-            Debug.Log(msg.data);
             EventManager.TriggerEvent(msg.action, msg.data);
         }
     }
@@ -52,7 +50,7 @@ public class WSConnection : MonoBehaviour {
     }
 
     async static void ReadWS() {
-        var rcvBytes = new byte[128];
+        var rcvBytes = new byte[256];
         var rcvBuffer = new ArraySegment<byte>(rcvBytes);
         while (true) {
             WebSocketReceiveResult rcvResult = await wsClient.ReceiveAsync(rcvBuffer, cToken);
