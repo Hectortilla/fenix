@@ -56,7 +56,7 @@ public class ResponsePing {
     public string message;
 }
 
-
+// ->
 [System.Serializable]
 public class Player
 {
@@ -69,3 +69,25 @@ public class PlayerList
 {
 	public List<Player> players;
 }
+// <-
+
+
+// ->
+[System.Serializable]
+public class PlayerTransform {
+    public string key;
+
+    public float px;
+    public float py;
+    public float pz;
+
+    public float rx;
+    public float ry;
+    public float rz;
+}
+
+[System.Serializable]
+public class PlayersTransforms {
+    public List<PlayerTransform> transforms;
+}
+// <-

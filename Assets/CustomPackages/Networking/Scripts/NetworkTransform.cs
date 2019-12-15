@@ -6,10 +6,20 @@ using System;
 [RequireComponent(typeof(NetworkEntity))]
 public class NetworkTransform : MonoBehaviour
 {
+    private Action<string> actionReceivedPlayersTransform;
+
     private float nextActionTime = 0.0f;
     public float period = 0.1f;
 
     NetworkEntity networkEntity;
+
+    void Awake () {
+        this.actionReceivedPlayersTransform = new Action<string>(this.ReceivedPlayersTransform);
+    }
+
+    void OnEnable () {
+        EventManager.StartListening("PLAYERS_TRANSFORM", this.actionReceivedPlayersTransform);
+    }
 
     void Start()
     {
@@ -42,5 +52,11 @@ public class NetworkTransform : MonoBehaviour
         );
         // ResponsePing responsePing = JsonUtility.FromJson<ResponsePing>(data);
         // Debug.Log(responsePing.message);
+    }
+    void ReceivedPlayersTransform(string data) {
+        PlayersTransforms playersTransforms = JsonUtility.FromJson<PlayersTransforms>(data);
+        foreach (PlayerTransform playerTransform in playersTransforms.transforms) {
+            NetworkRemotePlayersController.MovePlayer(playerTransform);
+        }
     }
 }

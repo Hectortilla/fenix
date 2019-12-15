@@ -32,6 +32,7 @@ public class NetworkRemotePlayersController : MonoBehaviour
         if (player.key == localPlayer.key) {
             Debug.Log("All Good");
         } else {
+            Debug.Log("New remote player added");
             _instance.InstantiateRemotePlayer(player);
         }
     }
@@ -53,6 +54,15 @@ public class NetworkRemotePlayersController : MonoBehaviour
     public void InstantiateRemotePlayer (Player rempotePlayer) {
         GameObject remotePlayerGO = Instantiate(remotePlayerPrefab);
         remotePlayers.Add(rempotePlayer.key, remotePlayerGO);
+        Debug.Log("New player!");
     }
-
+    public static void MovePlayer (PlayerTransform playerTransform) {
+        GameObject remotePlayer = null;
+        if(remotePlayers.TryGetValue(playerTransform.key, out remotePlayer))
+        {
+            GameObject remotePlayerGO = remotePlayers[playerTransform.key];
+            remotePlayerGO.transform.position = new Vector3(playerTransform.px, playerTransform.py, playerTransform.pz);
+            remotePlayerGO.transform.rotation = Quaternion.Euler(new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz));
+        }
+    }
 }

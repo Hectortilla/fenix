@@ -41,6 +41,7 @@ public class NetworkEntity : MonoBehaviour
     }
 
     void ReceivedGamePlayers(string data) {
+        Debug.Log(1);
         PlayerList playerList = JsonUtility.FromJson<PlayerList>(data);
         foreach (Player player in playerList.players) {
             NetworkRemotePlayersController.AddPlayer(player);
@@ -48,6 +49,7 @@ public class NetworkEntity : MonoBehaviour
     }
 
 	void ReceivedPlayerJoined(string data) {
+        Debug.Log(2);
     	NetworkRemotePlayersController.AddPlayer(JsonUtility.FromJson<Player>(data));
 	}
 
