@@ -55,3 +55,17 @@ public class TransformMessage {
 public class ResponsePing {
     public string message;
 }
+
+
+[System.Serializable]
+public class Player
+{
+    public string key;
+    public string name;
+}
+
+[System.Serializable]
+public class PlayerList
+{
+	public List<Player> players;
+}

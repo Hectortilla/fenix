@@ -5,10 +5,8 @@ using System;
 
 public class NetworkEntity : MonoBehaviour
 {
-	string playerName;
+	Player mySlef;
 	
-	List<Player> players;
-
     private Action<string> actionReceivedAuth;
     private Action<string> actionReceivedGamePlayers;
     private Action<string> actionReceivedPlayerJoined;
@@ -20,46 +18,34 @@ public class NetworkEntity : MonoBehaviour
     }
 
     void OnEnable () {
-        EventManager.StartListening("AUTH", this.actionReceivedAuth);
+        EventManager.StartListening("AUTH_PLAYER", this.actionReceivedAuth);
         EventManager.StartListening("GAME_PLAYERS", this.actionReceivedGamePlayers);
         EventManager.StartListening("PLAYER_JOINED", this.actionReceivedPlayerJoined);
     }
     // Start is called before the first frame update
     void Start()
     {
-        playerName = Utilities.GenerateName(4, 10);
         StartCoroutine(Auth());
     }
     IEnumerator Auth()
     {
         yield return new WaitUntil(() => WSConnection.init);
+        string playerName = Utilities.GenerateName(4, 10);
         WSConnection.SendMessage("auth", new AuthMessage(playerName));
     }
     void ReceivedAuth(string data) {
-        Debug.Log("Authenticated as " + playerName + "!");
+        NetworkRemotePlayersController.SetLocalPlayer(JsonUtility.FromJson<Player>(data));
     }
 
     void ReceivedGamePlayers(string data) {
-        Debug.Log("ReceivedGamePlayers")	;
-    	players = JsonUtility.FromJson<PlayerList>(data).players;
+        PlayerList playerList = JsonUtility.FromJson<PlayerList>(data);
+        foreach (Player player in playerList.players) {
+            NetworkRemotePlayersController.AddPlayer(player);
+        }
     }
 
 	void ReceivedPlayerJoined(string data) {
         Debug.Log("ReceivedPlayerJoined");
-    	players.Add(JsonUtility.FromJson<Player>(data));
-
+    	NetworkRemotePlayersController.AddPlayer(JsonUtility.FromJson<Player>(data));
 	}
-}
-
-[System.Serializable]
-public class Player
-{
-    public string key;
-    public string name;
-}
-
-[System.Serializable]
-public class PlayerList
-{
-	public List<Player> players;
 }
