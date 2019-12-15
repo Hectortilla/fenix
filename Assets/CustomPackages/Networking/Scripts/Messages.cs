@@ -91,3 +91,8 @@ public class PlayersTransforms {
     public List<PlayerTransform> transforms;
 }
 // <-
+
+[System.Serializable]
+public class Game {
+    public string key;
+}

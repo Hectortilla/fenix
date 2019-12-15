@@ -16,6 +16,8 @@ public class WSConnection : MonoBehaviour {
     static AsyncQueue<IncomingNetworkMessage> queue = new AsyncQueue<IncomingNetworkMessage>();
     public static bool init = false;
 
+    static string[] ignoreActions = {"PLAYERS_TRANSFORM"};
+
     // Singleton pattern ------- >
     static WSConnection _instance;
 
@@ -37,9 +39,6 @@ public class WSConnection : MonoBehaviour {
     void Update() {
         IncomingNetworkMessage msg = GetMessage();
         if (msg != null) {
-            if (msg.action == "error") {
-                Debug.Log("Error: " + " -> " + msg.data);
-            }
             EventManager.TriggerEvent(msg.action, msg.data);
         }
     }
@@ -60,6 +59,9 @@ public class WSConnection : MonoBehaviour {
             byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(rcvResult.Count).ToArray();
             string rcvMsg = Encoding.UTF8.GetString(msgBytes);
             IncomingNetworkMessage msg = JsonUtility.FromJson<IncomingNetworkMessage>(rcvMsg);
+            if (Array.IndexOf(ignoreActions, msg.action) == -1) {
+                Debug.Log("Incoming ---> " + msg.action + " --- DATA:  " + msg.data);
+            }
             queue.Enqueue(msg);
             // EventManager.TriggerEvent(msg.action, msg.data);
         }

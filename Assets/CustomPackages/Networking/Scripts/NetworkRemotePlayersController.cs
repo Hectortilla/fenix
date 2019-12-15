@@ -29,12 +29,10 @@ public class NetworkRemotePlayersController : MonoBehaviour
     }*/
     // < -------------------------
     public static void AddPlayer (Player player) {
-        if (player.key == localPlayer.key) {
-            Debug.Log("All Good");
-        } else {
-            Debug.Log("New remote player added");
+        if (player.key != localPlayer.key) {
             _instance.InstantiateRemotePlayer(player);
         }
+        EventManager.TriggerEvent("UI:PLAYERS", (remotePlayers.Count + 1).ToString());
     }
     
     public static void RemovePlayer (Player player) {
@@ -44,17 +42,18 @@ public class NetworkRemotePlayersController : MonoBehaviour
             remotePlayers.Remove(player.key);
             Destroy(remotePlayer);
         }
+        EventManager.TriggerEvent("UI:PLAYERS", (remotePlayers.Count + 1).ToString());
     }
 
     public static void SetLocalPlayer (Player _localPlayer) {
         localPlayer = _localPlayer;
-        Debug.Log("Authenticated as " + localPlayer.name + "!");
+        EventManager.TriggerEvent("UI:NAME", localPlayer.name);
     }
 
     public void InstantiateRemotePlayer (Player rempotePlayer) {
         GameObject remotePlayerGO = Instantiate(remotePlayerPrefab);
         remotePlayers.Add(rempotePlayer.key, remotePlayerGO);
-        Debug.Log("New player!");
+
     }
     public static void MovePlayer (PlayerTransform playerTransform) {
         GameObject remotePlayer = null;

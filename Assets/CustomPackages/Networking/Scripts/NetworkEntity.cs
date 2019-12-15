@@ -11,12 +11,14 @@ public class NetworkEntity : MonoBehaviour
     private Action<string> actionReceivedGamePlayers;
     private Action<string> actionReceivedPlayerJoined;
     private Action<string> actionReceivedPlayerLeft;
+    private Action<string> actionReceivedGameJoined;
 
     void Awake () {
         this.actionReceivedAuth = new Action<string>(this.ReceivedAuth);
         this.actionReceivedGamePlayers = new Action<string>(this.ReceivedGamePlayers);
         this.actionReceivedPlayerJoined = new Action<string>(this.ReceivedPlayerJoined);
         this.actionReceivedPlayerLeft = new Action<string>(this.ReceivedPlayerLeft);
+        this.actionReceivedGameJoined = new Action<string>(this.ReceivedGameJoined);
     }
 
     void OnEnable () {
@@ -24,6 +26,7 @@ public class NetworkEntity : MonoBehaviour
         EventManager.StartListening("GAME_PLAYERS", this.actionReceivedGamePlayers);
         EventManager.StartListening("PLAYER_JOINED", this.actionReceivedPlayerJoined);
         EventManager.StartListening("PLAYER_LEFT", this.actionReceivedPlayerLeft);
+        EventManager.StartListening("GAME_JOINED", this.actionReceivedGameJoined);
     }
     // Start is called before the first frame update
     void Start()
@@ -41,7 +44,6 @@ public class NetworkEntity : MonoBehaviour
     }
 
     void ReceivedGamePlayers(string data) {
-        Debug.Log(1);
         PlayerList playerList = JsonUtility.FromJson<PlayerList>(data);
         foreach (Player player in playerList.players) {
             NetworkRemotePlayersController.AddPlayer(player);
@@ -49,11 +51,13 @@ public class NetworkEntity : MonoBehaviour
     }
 
 	void ReceivedPlayerJoined(string data) {
-        Debug.Log(2);
     	NetworkRemotePlayersController.AddPlayer(JsonUtility.FromJson<Player>(data));
 	}
 
     void ReceivedPlayerLeft(string data) {
     	NetworkRemotePlayersController.RemovePlayer(JsonUtility.FromJson<Player>(data));
+	}
+    void ReceivedGameJoined(string data) {
+    	EventManager.TriggerEvent("UI:GAME_KEY", JsonUtility.FromJson<Game>(data).key);
 	}
 }
