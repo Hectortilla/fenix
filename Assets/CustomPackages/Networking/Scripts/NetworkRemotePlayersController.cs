@@ -31,6 +31,7 @@ public class NetworkRemotePlayersController : MonoBehaviour
     public static void AddPlayer (Player player) {
         if (player.key != localPlayer.key) {
             _instance.InstantiateRemotePlayer(player);
+
         }
         EventManager.TriggerEvent("UI:PLAYERS", (remotePlayers.Count + 1).ToString());
     }

@@ -39,6 +39,9 @@ public class WSConnection : MonoBehaviour {
     void Update() {
         IncomingNetworkMessage msg = GetMessage();
         if (msg != null) {
+            if (Array.IndexOf(ignoreActions, msg.action) == -1) {
+                Debug.Log("Triggering ---> " + msg.action + " --- DATA:  " + msg.data);
+            }
             EventManager.TriggerEvent(msg.action, msg.data);
         }
     }
