@@ -36,8 +36,13 @@ public class NetworkRemotePlayersController : MonoBehaviour
         }
     }
     
-    public static void RemovePlayer () {
-
+    public static void RemovePlayer (Player player) {
+        GameObject remotePlayer = null;
+        if(remotePlayers.TryGetValue(player.key, out remotePlayer))
+        {
+            remotePlayers.Remove(player.key);
+            Destroy(remotePlayer);
+        }
     }
 
     public static void SetLocalPlayer (Player _localPlayer) {

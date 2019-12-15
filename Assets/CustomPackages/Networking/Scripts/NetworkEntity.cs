@@ -10,17 +10,20 @@ public class NetworkEntity : MonoBehaviour
     private Action<string> actionReceivedAuth;
     private Action<string> actionReceivedGamePlayers;
     private Action<string> actionReceivedPlayerJoined;
+    private Action<string> actionReceivedPlayerLeft;
 
     void Awake () {
         this.actionReceivedAuth = new Action<string>(this.ReceivedAuth);
         this.actionReceivedGamePlayers = new Action<string>(this.ReceivedGamePlayers);
         this.actionReceivedPlayerJoined = new Action<string>(this.ReceivedPlayerJoined);
+        this.actionReceivedPlayerLeft = new Action<string>(this.ReceivedPlayerLeft);
     }
 
     void OnEnable () {
         EventManager.StartListening("AUTH_PLAYER", this.actionReceivedAuth);
         EventManager.StartListening("GAME_PLAYERS", this.actionReceivedGamePlayers);
         EventManager.StartListening("PLAYER_JOINED", this.actionReceivedPlayerJoined);
+        EventManager.StartListening("PLAYER_LEFT", this.actionReceivedPlayerLeft);
     }
     // Start is called before the first frame update
     void Start()
@@ -45,7 +48,10 @@ public class NetworkEntity : MonoBehaviour
     }
 
 	void ReceivedPlayerJoined(string data) {
-        Debug.Log("ReceivedPlayerJoined");
     	NetworkRemotePlayersController.AddPlayer(JsonUtility.FromJson<Player>(data));
+	}
+
+    void ReceivedPlayerLeft(string data) {
+    	NetworkRemotePlayersController.RemovePlayer(JsonUtility.FromJson<Player>(data));
 	}
 }
