@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
-
+using System.IO;
 
 // https://itq.nl/net-4-5-websocket-client-without-a-browser/
 public class WSConnection : MonoBehaviour {
     
     static string serverHost = "ws://localhost:9000/";
-    static ClientWebSocket wsClient = new ClientWebSocket();
-    static CancellationToken cToken = new CancellationTokenSource().Token;
+    static ClientWebSocket socket = new ClientWebSocket();
+
     static AsyncQueue<IncomingNetworkMessage> queue = new AsyncQueue<IncomingNetworkMessage>();
     public static bool init = false;
 
@@ -47,7 +47,7 @@ public class WSConnection : MonoBehaviour {
     }
 
     async static void Init() {
-        await wsClient.ConnectAsync(new Uri(serverHost), cToken);
+        await socket.ConnectAsync(new Uri(serverHost), CancellationToken.None);
         Thread oThread = new Thread(ReadWS);
         oThread.Start();
         oThread.IsBackground = true;
@@ -55,26 +55,39 @@ public class WSConnection : MonoBehaviour {
     }
 
     async static void ReadWS() {
-        var rcvBytes = new byte[256];
-        var rcvBuffer = new ArraySegment<byte>(rcvBytes);
-        while (true) {
-            WebSocketReceiveResult rcvResult = await wsClient.ReceiveAsync(rcvBuffer, cToken);
-            byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(rcvResult.Count).ToArray();
-            string rcvMsg = Encoding.UTF8.GetString(msgBytes);
-            IncomingNetworkMessage msg = JsonUtility.FromJson<IncomingNetworkMessage>(rcvMsg);
-            if (Array.IndexOf(ignoreActions, msg.action) == -1) {
-                Debug.Log("Incoming ---> " + msg.action + " --- DATA:  " + msg.data);
+        var buffer = new ArraySegment<byte>(new byte[2048]);
+
+        do {
+            WebSocketReceiveResult result;
+            using (var ms = new MemoryStream()) {
+                do {
+                    result = await socket.ReceiveAsync(buffer, CancellationToken.None);
+                    ms.Write(buffer.Array, buffer.Offset, result.Count);
+                } while (!result.EndOfMessage);
+
+                if (result.MessageType == WebSocketMessageType.Close)
+                    break;
+
+                ms.Seek(0, SeekOrigin.Begin);
+                using (var reader = new StreamReader(ms, Encoding.UTF8)) {
+
+                    string rcvMsg = await reader.ReadToEndAsync();
+                    IncomingNetworkMessage msg = JsonUtility.FromJson<IncomingNetworkMessage>(rcvMsg);
+                    if (Array.IndexOf(ignoreActions, msg.action) == -1) {
+                        Debug.Log("Incoming ---> " + msg.action + " --- DATA:  " + msg.data);
+                    }
+                    queue.Enqueue(msg);
+                }
             }
-            queue.Enqueue(msg);
-            // EventManager.TriggerEvent(msg.action, msg.data);
-        }
+
+        } while (true);
     }
 
     async static public void SendMessage(string action, object data) {
         if (init) {
             byte[] sendBytes = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new OutgoingNetworkMessage(action, JsonUtility.ToJson(data))));
             var sendBuffer = new ArraySegment<byte>(sendBytes);
-            await wsClient.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: WSConnection.cToken);
+            await socket.SendAsync(sendBuffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken: CancellationToken.None);
         }
     }
     public static IncomingNetworkMessage GetMessage() {
