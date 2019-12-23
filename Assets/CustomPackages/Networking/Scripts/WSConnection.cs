@@ -3,17 +3,16 @@ using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using System.IO;
-
+using System.Collections.Generic;
 // https://itq.nl/net-4-5-websocket-client-without-a-browser/
 public class WSConnection : MonoBehaviour {
     
     static string serverHost = "ws://localhost:9000/";
     static ClientWebSocket socket = new ClientWebSocket();
 
-    static AsyncQueue<IncomingNetworkMessage> queue = new AsyncQueue<IncomingNetworkMessage>();
+    static Queue<IncomingNetworkMessage> queue = new Queue<IncomingNetworkMessage>();
     public static bool init = false;
 
     static string[] ignoreActions = {"PLAYERS_TRANSFORM"};
@@ -38,11 +37,12 @@ public class WSConnection : MonoBehaviour {
 
     void Update() {
         IncomingNetworkMessage msg = GetMessage();
-        if (msg != null) {
+        while(msg != null) {
             if (Array.IndexOf(ignoreActions, msg.action) == -1) {
                 Debug.Log("Triggering ---> " + msg.action + " --- DATA:  " + msg.data);
             }
             EventManager.TriggerEvent(msg.action, msg.data);
+            msg = GetMessage();
         }
     }
 
@@ -91,7 +91,9 @@ public class WSConnection : MonoBehaviour {
         }
     }
     public static IncomingNetworkMessage GetMessage() {
-        return queue.Dequeue();
+        if (queue.Count != 0)
+            return queue.Dequeue();
+        return null;
     }
 
 }
