@@ -43,20 +43,10 @@ public class NetworkTransform : MonoBehaviour
             WSConnection.SendMessage(transformMessage.action, transformMessage);
         }
     }
-    void PlayerMoved(string data) {
-        GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.position = new Vector3(
-            UnityEngine.Random.Range(-3.0f, 3.0f),
-            UnityEngine.Random.Range(-3.0f, 3.0f),
-            UnityEngine.Random.Range(-3.0f, 3.0f)
-        );
-        // ResponsePing responsePing = JsonUtility.FromJson<ResponsePing>(data);
-        // Debug.Log(responsePing.message);
-    }
     void ReceivedPlayersTransform(string data) {
         PlayersTransforms playersTransforms = JsonUtility.FromJson<PlayersTransforms>(data);
         foreach (PlayerTransform playerTransform in playersTransforms.transforms) {
-            NetworkRemotePlayersController.MovePlayer(playerTransform);
+            NetworkRemotePlayersController.SetRemotePlayerTransform(playerTransform);
         }
     }
 }

@@ -8,6 +8,8 @@ public class NetworkRemotePlayersController : MonoBehaviour
     [SerializeField]
     private GameObject remotePlayerPrefab;
     static Dictionary<string, GameObject> remotePlayers = new Dictionary<string, GameObject>();
+    static Dictionary<string, Vector3> remotePlayersPositions = new Dictionary<string, Vector3>();
+    static Dictionary<string, Vector3> remotePlayersRotations = new Dictionary<string, Vector3>();
 
     // Singleton pattern ------- >
     static NetworkRemotePlayersController _instance;
@@ -22,16 +24,11 @@ public class NetworkRemotePlayersController : MonoBehaviour
             _instance = this;
         }
     }
-    static NetworkRemotePlayersController() {
-        // WSConnection.Init();
-    }
-    /*async static void Init() {
-    }*/
     // < -------------------------
+
     public static void AddPlayer (Player player) {
         if (player.key != localPlayer.key) {
             _instance.InstantiateRemotePlayer(player);
-
         }
         EventManager.TriggerEvent("UI:PLAYERS", (remotePlayers.Count + 1).ToString());
     }
@@ -53,9 +50,11 @@ public class NetworkRemotePlayersController : MonoBehaviour
 
     public void InstantiateRemotePlayer (Player rempotePlayer) {
         GameObject remotePlayerGO = Instantiate(remotePlayerPrefab);
+        remotePlayerGO.AddComponent<NetworkRemotePlayerTransform>();
         remotePlayers.Add(rempotePlayer.key, remotePlayerGO);
 
     }
+    /*
     public static void MovePlayer (PlayerTransform playerTransform) {
         GameObject remotePlayer = null;
         if(remotePlayers.TryGetValue(playerTransform.key, out remotePlayer))
@@ -64,5 +63,22 @@ public class NetworkRemotePlayersController : MonoBehaviour
             remotePlayerGO.transform.position = new Vector3(playerTransform.px, playerTransform.py, playerTransform.pz);
             remotePlayerGO.transform.rotation = Quaternion.Euler(new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz));
         }
+    }
+    */
+    public static void SetRemotePlayerTransform (PlayerTransform playerTransform) {
+        GameObject remotePlayer = null;
+        if(remotePlayers.TryGetValue(playerTransform.key, out remotePlayer))
+        {
+            NetworkRemotePlayerTransform networkRemotePlayerTransform = remotePlayer.GetComponent<NetworkRemotePlayerTransform>();
+            networkRemotePlayerTransform.targetPosition = new Vector3(playerTransform.px, playerTransform.py, playerTransform.pz);
+            networkRemotePlayerTransform.targetRotation = new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz);
+        }
+        /*
+        if (playerTransform.key != localPlayer.key) {
+            NetworkRemotePlayerTransform networkRemotePlayerTransform = remotePlayers[playerTransform.key].GetComponent<NetworkRemotePlayerTransform>();
+            networkRemotePlayerTransform.targetPosition = new Vector3(playerTransform.px, playerTransform.py, playerTransform.pz);
+            networkRemotePlayerTransform.targetRotation = new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz);
+        }
+        */
     }
 }
