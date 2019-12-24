@@ -26,10 +26,11 @@ public class NetworkRemotePlayerTransform : MonoBehaviour
         finalRotation = transform.rotation.eulerAngles;
     }
     void Update() {
-        InterpolateTransform();
+        InterpolatePosition();
+        InterpolateRotation();
     }
 
-    void InterpolateTransform() {
+    void InterpolatePosition() {
         if (targetPosition != finalPosition) {
             finalPosition = targetPosition;
             startPosition = transform.position;
@@ -37,6 +38,15 @@ public class NetworkRemotePlayerTransform : MonoBehaviour
         }
         float fractionOfJourney = (Time.time - startTime) / speed;
         transform.position = Vector3.Lerp(startPosition, finalPosition, fractionOfJourney);
+    }
+    void InterpolateRotation() {
+        if (targetRotation != finalRotation) {
+            finalRotation = targetRotation;
+            startRotation = transform.rotation;
+            startTime = Time.time;
+        }
+        float fractionOfJourney = (Time.time - startTime) / speed;
+        transform.rotation = Quaternion.Euler(Vector3.Lerp(startPosition, finalPosition, fractionOfJourney));
     }
 
 }
