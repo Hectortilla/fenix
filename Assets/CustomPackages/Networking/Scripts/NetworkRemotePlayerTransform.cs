@@ -15,8 +15,9 @@ public class NetworkRemotePlayerTransform : MonoBehaviour
 
     private float startTime;
     private float journeyLength;
+
     [SerializeField]
-    public float speed = 6.0F;  // units per second.
+    public float speed = 0.1F;  // seconds to move.
     void Start()
     {
         targetPosition = transform.position;
@@ -33,10 +34,8 @@ public class NetworkRemotePlayerTransform : MonoBehaviour
             finalPosition = targetPosition;
             startPosition = transform.position;
             startTime = Time.time;
-            journeyLength = Vector3.Distance(startPosition, finalPosition);
         }
-        float distCovered = (Time.time - startTime) * speed;
-        float fractionOfJourney = distCovered / journeyLength;
+        float fractionOfJourney = (Time.time - startTime) / speed;
         transform.position = Vector3.Lerp(startPosition, finalPosition, fractionOfJourney);
     }
 
