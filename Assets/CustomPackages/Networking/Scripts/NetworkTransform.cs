@@ -26,7 +26,7 @@ public class NetworkTransform : MonoBehaviour
         networkEntity = GetComponent<NetworkEntity>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (!networkEntity.isAuth) return;
 
@@ -38,10 +38,6 @@ public class NetworkTransform : MonoBehaviour
             transform.rotation.y,
             transform.rotation.z
         );
-        Debug.Log(this.gameObject.transform.position);
-        Debug.Log(this.gameObject);
-        // Debug.Log(this.transform.position.x);
-        Debug.Log("'====================='");
 
         if (Time.time > nextActionTime ) {
             nextActionTime += period;
@@ -51,8 +47,8 @@ public class NetworkTransform : MonoBehaviour
     void ReceivedPlayersTransform(string data) {
         PlayersTransforms playersTransforms = JsonUtility.FromJson<PlayersTransforms>(data);
         foreach (PlayerTransform playerTransform in playersTransforms.transforms) {
-            // NetworkRemotePlayersController.SetRemotePlayerTransform(playerTransform);
-            NetworkRemotePlayersController.MovePlayer(playerTransform);
+            NetworkRemotePlayersController.SetRemotePlayerTransform(playerTransform);
+            // NetworkRemotePlayersController.MovePlayer(playerTransform);
             
         }
     }

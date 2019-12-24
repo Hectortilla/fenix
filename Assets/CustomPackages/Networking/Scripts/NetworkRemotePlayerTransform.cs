@@ -16,7 +16,7 @@ public class NetworkRemotePlayerTransform : MonoBehaviour
     private float startTime;
     private float journeyLength;
     [SerializeField]
-    public float speed = 100.0F;  // units per second.
+    public float speed = 6.0F;  // units per second.
     void Start()
     {
         targetPosition = transform.position;
@@ -29,8 +29,7 @@ public class NetworkRemotePlayerTransform : MonoBehaviour
     }
 
     void InterpolateTransform() {
-        if (Vector3.Distance(targetPosition, finalPosition) > 0.5f) {
-            Debug.Log(1);
+        if (targetPosition != finalPosition) {
             finalPosition = targetPosition;
             startPosition = transform.position;
             startTime = Time.time;
