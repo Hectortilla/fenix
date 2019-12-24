@@ -70,8 +70,8 @@ public class NetworkRemotePlayersController : MonoBehaviour
         if(remotePlayers.TryGetValue(playerTransform.key, out remotePlayer))
         {
             NetworkRemotePlayerTransform networkRemotePlayerTransform = remotePlayer.GetComponent<NetworkRemotePlayerTransform>();
-            networkRemotePlayerTransform.targetPosition = new Vector3(playerTransform.px, playerTransform.py, playerTransform.pz);
-            networkRemotePlayerTransform.targetRotation = new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz);
+            networkRemotePlayerTransform.newTargetPosition = new Vector3(playerTransform.px, playerTransform.py, playerTransform.pz);
+            networkRemotePlayerTransform.newTargetRotation = new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz);
         }
     }
 }
