@@ -50,11 +50,10 @@ public class NetworkRemotePlayersController : MonoBehaviour
 
     public void InstantiateRemotePlayer (Player rempotePlayer) {
         GameObject remotePlayerGO = Instantiate(remotePlayerPrefab);
-        remotePlayerGO.AddComponent<NetworkRemotePlayerTransform>();
+        // remotePlayerGO.AddComponent<NetworkRemotePlayerTransform>();
         remotePlayers.Add(rempotePlayer.key, remotePlayerGO);
 
     }
-    /*
     public static void MovePlayer (PlayerTransform playerTransform) {
         GameObject remotePlayer = null;
         if(remotePlayers.TryGetValue(playerTransform.key, out remotePlayer))
@@ -64,7 +63,7 @@ public class NetworkRemotePlayersController : MonoBehaviour
             remotePlayerGO.transform.rotation = Quaternion.Euler(new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz));
         }
     }
-    */
+    /*
     public static void SetRemotePlayerTransform (PlayerTransform playerTransform) {
         GameObject remotePlayer = null;
         if(remotePlayers.TryGetValue(playerTransform.key, out remotePlayer))
@@ -73,12 +72,6 @@ public class NetworkRemotePlayersController : MonoBehaviour
             networkRemotePlayerTransform.targetPosition = new Vector3(playerTransform.px, playerTransform.py, playerTransform.pz);
             networkRemotePlayerTransform.targetRotation = new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz);
         }
-        /*
-        if (playerTransform.key != localPlayer.key) {
-            NetworkRemotePlayerTransform networkRemotePlayerTransform = remotePlayers[playerTransform.key].GetComponent<NetworkRemotePlayerTransform>();
-            networkRemotePlayerTransform.targetPosition = new Vector3(playerTransform.px, playerTransform.py, playerTransform.pz);
-            networkRemotePlayerTransform.targetRotation = new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz);
-        }
-        */
     }
+    */
 }

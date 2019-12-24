@@ -6,7 +6,8 @@ using System;
 public class NetworkEntity : MonoBehaviour
 {
 	Player mySlef;
-	
+	public bool isAuth = false;
+
     private Action<string> actionReceivedAuth;
     private Action<string> actionReceivedGamePlayers;
     private Action<string> actionReceivedPlayerJoined;
@@ -41,6 +42,7 @@ public class NetworkEntity : MonoBehaviour
     }
     void ReceivedAuth(string data) {
         NetworkRemotePlayersController.SetLocalPlayer(JsonUtility.FromJson<Player>(data));
+        isAuth = true;
     }
 
     void ReceivedGamePlayers(string data) {
