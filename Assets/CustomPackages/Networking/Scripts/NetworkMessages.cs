@@ -96,3 +96,25 @@ public class PlayersTransforms {
 public class Game {
     public string key;
 }
+
+// CONNECTION
+
+
+[System.Serializable]
+public class IncomingNetworkMessage {
+    public int code;
+    public string action;
+    public string data;
+}
+
+
+[System.Serializable]
+public class OutgoingNetworkMessage {
+    public string action;
+    public string data;
+
+    public OutgoingNetworkMessage(string _action, string _data){
+        action = _action;
+        data = _data;
+    }
+}

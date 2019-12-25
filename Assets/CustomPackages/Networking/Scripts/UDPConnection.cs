@@ -45,9 +45,20 @@ public class UDPConnection : MonoBehaviour
         init = true;
     }
 
-    void Start()
-    {
-        
+    void Update() {
+        IncomingNetworkMessage msg = GetMessage();
+        while(msg != null) {
+            if (Array.IndexOf(ignoreActions, msg.action) == -1) {
+                Debug.Log("Triggering ---> " + msg.action + " --- DATA:  " + msg.data);
+            }
+            EventManager.TriggerEvent(msg.action, msg.data);
+            msg = GetMessage();
+        }
+    }
+    public static IncomingNetworkMessage GetMessage() {
+        if (queue.Count != 0)
+            return queue.Dequeue();
+        return null;
     }
 
     static void ReadSocket() {
@@ -56,22 +67,23 @@ public class UDPConnection : MonoBehaviour
             IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
             // Blocks until a message returns on this socket from a remote host.
             Byte[] receiveBytes = socket.Receive(ref RemoteIpEndPoint); 
-            string msg = Encoding.ASCII.GetString(receiveBytes);
-            Debug.Log("Incoming UDP ---> " + msg);
+            string rcvMsg = Encoding.ASCII.GetString(receiveBytes);
+            IncomingNetworkMessage msg = JsonUtility.FromJson<IncomingNetworkMessage>(rcvMsg);
+            if (Array.IndexOf(ignoreActions, msg.action) == -1) {
+                Debug.Log("Incoming ---> " + msg.action + " --- DATA:  " + msg.data);
+            }
+            queue.Enqueue(msg);
 
         } while (true);
     }
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-    static public void SendMessage(string data) {
+    
+    public static void Send(string action, object data) {
         if (init) {
-            Byte[] sendBytes = Encoding.ASCII.GetBytes(data);
+            Byte[] sendBytes = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new OutgoingNetworkMessage(action, JsonUtility.ToJson(data))));
             socket.Send(sendBytes, sendBytes.Length);
         }
     }
+
     void OnDestroy()
     {
         socket.Close();
