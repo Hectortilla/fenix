@@ -13,7 +13,7 @@ public class UDPConnection : MonoBehaviour
     static string serverHost = "localhost";
     static int serverPort = 9000;
 
-    static UdpClient socket = new UdpClient(11000);
+    static UdpClient socket = new UdpClient(0);  // free port
 
     static Queue<IncomingNetworkMessage> queue = new Queue<IncomingNetworkMessage>();
     public static bool init = false;
