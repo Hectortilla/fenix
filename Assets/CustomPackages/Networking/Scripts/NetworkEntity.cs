@@ -36,9 +36,9 @@ public class NetworkEntity : MonoBehaviour
     }
     IEnumerator Auth()
     {
-        yield return new WaitUntil(() => WSConnection.init);
+        yield return new WaitUntil(() => UDPConnection.init);
         string playerName = Utilities.GenerateName(4, 10);
-        WSConnection.SendMessage("auth", new AuthMessage(playerName));
+        UDPConnection.Send("auth", new AuthMessage(playerName));
     }
     void ReceivedAuth(string data) {
         NetworkRemotePlayersController.SetLocalPlayer(JsonUtility.FromJson<Player>(data));

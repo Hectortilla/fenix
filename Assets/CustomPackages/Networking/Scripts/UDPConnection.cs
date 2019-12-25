@@ -67,6 +67,7 @@ public class UDPConnection : MonoBehaviour
             IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
             // Blocks until a message returns on this socket from a remote host.
             Byte[] receiveBytes = socket.Receive(ref RemoteIpEndPoint); 
+
             string rcvMsg = Encoding.ASCII.GetString(receiveBytes);
             IncomingNetworkMessage msg = JsonUtility.FromJson<IncomingNetworkMessage>(rcvMsg);
             if (Array.IndexOf(ignoreActions, msg.action) == -1) {
