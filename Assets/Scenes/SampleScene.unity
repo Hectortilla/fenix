@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.4465785, g: 0.49641252, b: 0.574817, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -123,6 +123,7 @@ GameObject:
   - component: {fileID: 5765613}
   - component: {fileID: 5765612}
   - component: {fileID: 5765614}
+  - component: {fileID: 5765615}
   m_Layer: 0
   m_Name: NetworkStack
   m_TagString: Untagged
@@ -137,7 +138,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5765611}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b3a9b28c3ad9953ac86d85fbca851b68, type: 3}
   m_Name: 
@@ -170,6 +171,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   remotePlayerPrefab: {fileID: 8968107617866769735, guid: d67efdc59b51c4ec89719b3371544918,
     type: 3}
+--- !u!114 &5765615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5765611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c098c3b081c37fe0cbb331ddae03fbcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &44701922
 GameObject:
   m_ObjectHideFlags: 0
