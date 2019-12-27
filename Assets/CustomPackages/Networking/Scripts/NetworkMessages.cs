@@ -3,14 +3,27 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
+public abstract class NetworkMessage
+{
+    abstract public string action { get; }
+}
+
+[System.Serializable]
+public class DisconnectMessage : NetworkMessage {
+    public override string action
+    {
+        get { return "disconnect"; }
+    }
+}
 
 // Outgoing
 
 [System.Serializable]
-public class AuthMessage {
-    [System.NonSerialized]
-    public string action = "auth";
-
+public class AuthMessage : NetworkMessage {
+    public override string action
+    {
+        get { return "auth"; }
+    }
     public string name;
 
     public AuthMessage (string _name) {
@@ -19,16 +32,20 @@ public class AuthMessage {
 }
 
 [System.Serializable]
-public class Ping {
-    [System.NonSerialized]
-    public string action = "ping";
+public class Ping : NetworkMessage {
+    public override string action
+    {
+        get { return "ping"; }
+    }
 }
 
 
 [System.Serializable]
-public class TransformMessage {
-    [System.NonSerialized]
-    public string action = "move";
+public class TransformMessage : NetworkMessage {
+    public override string action
+    {
+        get { return "move"; }
+    }
 
     public float px;
     public float py;

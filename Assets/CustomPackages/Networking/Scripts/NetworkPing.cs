@@ -18,7 +18,7 @@ public class NetworkPing : MonoBehaviour
     void Update () {
         if (Input.GetKeyDown("p"))
         {
-            UDPConnection.Send("ping", new Ping());
+            UDPConnection.Send(new Ping());
         }
     }
 

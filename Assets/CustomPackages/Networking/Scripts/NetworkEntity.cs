@@ -38,7 +38,7 @@ public class NetworkEntity : MonoBehaviour
     {
         yield return new WaitUntil(() => UDPConnection.init);
         string playerName = Utilities.GenerateName(4, 10);
-        UDPConnection.Send("auth", new AuthMessage(playerName));
+        UDPConnection.Send(new AuthMessage(playerName));
     }
     void ReceivedAuth(string data) {
         NetworkRemotePlayersController.SetLocalPlayer(JsonUtility.FromJson<Player>(data));

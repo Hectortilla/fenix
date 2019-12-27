@@ -19,7 +19,7 @@ public class UDPConnection : MonoBehaviour
     public static bool init = false;
 
     static string[] ignoreActions = {"PLAYERS_TRANSFORM"};
-
+    string disconnect_action = "disconnect";
     // Singleton pattern ------- >
     static UDPConnection _instance;
 
@@ -78,15 +78,16 @@ public class UDPConnection : MonoBehaviour
         } while (true);
     }
     
-    public static void Send(string action, object data) {
+    public static void Send(NetworkMessage data) {
         if (init) {
-            Byte[] sendBytes = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new OutgoingNetworkMessage(action, JsonUtility.ToJson(data))));
+            Byte[] sendBytes = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new OutgoingNetworkMessage(data.action, JsonUtility.ToJson(data))));
             socket.Send(sendBytes, sendBytes.Length);
         }
     }
 
     void OnDestroy()
     {
+        Send(new DisconnectMessage());
         socket.Close();
         Debug.Log("OnDestroy1");
     }

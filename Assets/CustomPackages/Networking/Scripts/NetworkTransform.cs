@@ -41,7 +41,7 @@ public class NetworkTransform : MonoBehaviour
 
         if (Time.time > nextActionTime ) {
             nextActionTime += period;
-            UDPConnection.Send(transformMessage.action, transformMessage);
+            UDPConnection.Send(transformMessage);
         }
     }
     void ReceivedPlayersTransform(string data) {
