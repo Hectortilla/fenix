@@ -89,6 +89,5 @@ public class UDPConnection : MonoBehaviour
     {
         Send(new DisconnectMessage());
         socket.Close();
-        Debug.Log("OnDestroy1");
     }
 }
