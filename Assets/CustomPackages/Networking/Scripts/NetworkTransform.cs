@@ -13,6 +13,12 @@ public class NetworkTransform : MonoBehaviour
 
     NetworkEntity networkEntity;
 
+    [SerializeField]
+    Transform positionTransform;
+
+    [SerializeField]
+    Transform rotationTransform;
+
     void Awake () {
         this.actionReceivedPlayerTransform = new Action<string>(this.ReceivedPlayersTransform);
     }
@@ -31,12 +37,12 @@ public class NetworkTransform : MonoBehaviour
         if (!networkEntity.isAuth) return;
 
         TransformMessage transformMessage = new TransformMessage(
-            transform.position.x,
-            transform.position.y,
-            transform.position.z,
-            transform.rotation.x,
-            transform.rotation.y,
-            transform.rotation.z
+            positionTransform.position.x,
+            positionTransform.position.y,
+            positionTransform.position.z,
+            rotationTransform.localEulerAngles.x,
+            positionTransform.eulerAngles.y,
+            0
         );
 
         if (Time.time > nextActionTime ) {

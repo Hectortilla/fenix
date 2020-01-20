@@ -71,7 +71,7 @@ public class NetworkRemotePlayersController : MonoBehaviour
         {
             NetworkRemotePlayerTransform networkRemotePlayerTransform = remotePlayer.GetComponent<NetworkRemotePlayerTransform>();
             networkRemotePlayerTransform.newTargetPosition = new Vector3(playerTransform.px, playerTransform.py, playerTransform.pz);
-            networkRemotePlayerTransform.newTargetRotation = new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz);
+            networkRemotePlayerTransform.newTargetRotation = Quaternion.Euler(new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz));
         }
     }
 }

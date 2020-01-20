@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class NetworkRemotePlayerTransform : MonoBehaviour
 {
-    public Vector3 startPosition;
-    public Vector3 startRotation;
-
     public Vector3 newTargetPosition;
-    public Vector3 newTargetRotation;
-
-    public Vector3 targetPosition;
-    public Vector3 targetRotation;
+    public Quaternion newTargetRotation;
+    Vector3 startPosition;
+    Quaternion startRotation;
+    Vector3 targetPosition;
+    Quaternion targetRotation;
 
     private float startTimePosition;
     private float startTimeRotation;
@@ -22,9 +20,9 @@ public class NetworkRemotePlayerTransform : MonoBehaviour
     void Start()
     {
         newTargetPosition = transform.position;
-        newTargetRotation = transform.rotation.eulerAngles;
+        newTargetRotation = transform.rotation;
         targetPosition = transform.position;
-        targetRotation = transform.rotation.eulerAngles;
+        targetRotation = transform.rotation;
     }
     void Update() {
         InterpolatePosition();
@@ -43,11 +41,13 @@ public class NetworkRemotePlayerTransform : MonoBehaviour
     void InterpolateRotation() {
         if (newTargetRotation != targetRotation) {
             targetRotation = newTargetRotation;
-            startRotation = transform.rotation.eulerAngles;
+            startRotation = transform.rotation;
             startTimeRotation = Time.time;
         }
         float fractionOfJourney = (Time.time - startTimeRotation) / speed;
-        transform.rotation = Quaternion.Euler(Vector3.Lerp(startRotation, targetRotation, fractionOfJourney));
+
+        transform.rotation = Quaternion.Slerp(startRotation, targetRotation, fractionOfJourney);
+        // transform.rotation = Quaternion.Euler(Vector3.Lerp(startRotation, targetRotation, fractionOfJourney));
     }
 
 }
