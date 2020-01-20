@@ -18,7 +18,7 @@ public class UDPConnection : MonoBehaviour
     static Queue<IncomingNetworkMessage> queue = new Queue<IncomingNetworkMessage>();
     public static bool init = false;
 
-    static string[] ignoreActions = {"PLAYERS_TRANSFORM"};
+    static string[] ignoreActions = {"PLAYER_TRANSFORM"};
     string disconnect_action = "disconnect";
     // Singleton pattern ------- >
     static UDPConnection _instance;
