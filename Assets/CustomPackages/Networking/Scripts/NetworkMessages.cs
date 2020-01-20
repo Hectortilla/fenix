@@ -103,10 +103,6 @@ public class PlayerTransform {
     public float rz;
 }
 
-[System.Serializable]
-public class PlayersTransforms {
-    public List<PlayerTransform> transforms;
-}
 // <-
 
 [System.Serializable]
