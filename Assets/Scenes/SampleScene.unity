@@ -961,7 +961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67c55d9aa97d5a546827f8762c95e1bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  period: 0.1
+  period: 0.03
   positionTransform: {fileID: 4235057518194922}
   rotationTransform: {fileID: 534669905}
 --- !u!4 &4235057518194922 stripped
