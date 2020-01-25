@@ -35,7 +35,7 @@ public class NetworkTransform : MonoBehaviour
             0
         );
 
-        if (Time.time > nextActionTime ) {
+        if (Time.time > nextActionTime) {
             nextActionTime += period;
             UDPConnection.Send(transformMessage);
         }

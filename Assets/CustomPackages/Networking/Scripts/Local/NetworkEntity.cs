@@ -19,6 +19,10 @@ public class NetworkEntity : MonoBehaviour
         EventManager.StartListening("AUTH_PLAYER", this.actionReceivedAuth);
         EventManager.StartListening("JOINED_GAME", this.actionReceivedJoinedGame);
     }
+    void OnDisable () {
+        EventManager.StopListening("AUTH_PLAYER", this.actionReceivedAuth);
+        EventManager.StopListening("JOINED_GAME", this.actionReceivedJoinedGame);
+    }
 
     void Start()
     {

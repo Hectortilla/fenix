@@ -5,14 +5,13 @@ using System;
 
 public class NetworkPing : MonoBehaviour
 {
-    private Action<string> actionPongHeard;
-
-    void Awake () {
-        this.actionPongHeard = new Action<string>(this.PongHeard);
-    }
+    private Action<string> actionReceivedPong = new Action<string>(ReceivedPong);
 
     void OnEnable () {
-        EventManager.StartListening("PONG", this.actionPongHeard);
+        EventManager.StartListening("PONG", this.actionReceivedPong);
+    }
+    void OnDisable () {
+        EventManager.StopListening("PONG", this.actionReceivedPong);
     }
 
     void Update () {
@@ -22,7 +21,7 @@ public class NetworkPing : MonoBehaviour
         }
     }
 
-    void PongHeard(string data) {
+    static void ReceivedPong(string data) {
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.position = new Vector3(
             UnityEngine.Random.Range(-3.0f, 3.0f),

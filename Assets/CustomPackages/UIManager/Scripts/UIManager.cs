@@ -17,24 +17,28 @@ public class UIManager : MonoBehaviour
     Action<string> actionGameKey;
     Action<string> actionPlayers;
 
-    void Awake () {
-        this.actionName = new Action<string>(this.listenerName);
-        this.actionGameKey = new Action<string>(this.listenerGameKey);
-        this.actionPlayers = new Action<string>(this.listenerPlayers);
+    void Start () {
+        actionName = new Action<string>(this.ListenerName);
+        actionGameKey = new Action<string>(this.ListenerGameKey);
+        actionPlayers = new Action<string>(this.ListenerPlayers);
     }
-
     void OnEnable () {
         EventManager.StartListening("UI:NAME", this.actionName);
         EventManager.StartListening("UI:GAME_KEY", this.actionGameKey);
         EventManager.StartListening("UI:PLAYERS", this.actionPlayers);
     }
-    void listenerName(string _name) {
+    void OnDisable () {
+        EventManager.StopListening("UI:NAME", this.actionName);
+        EventManager.StopListening("UI:GAME_KEY", this.actionGameKey);
+        EventManager.StopListening("UI:PLAYERS", this.actionPlayers);
+    }
+    void ListenerName(string _name) {
         name.text = "Name: " + _name;
     }
-    void listenerPlayers(string _players) {
+    void ListenerPlayers(string _players) {
         players.text = "Players: " + _players;
     }
-    void listenerGameKey(string _gameKey) {
+    void ListenerGameKey(string _gameKey) {
         gameKey.text = "Game: " + _gameKey;
     }
 }

@@ -10,25 +10,22 @@ public class NetworkRemotePlayersController : Singleton<NetworkRemotePlayersCont
     GameObject remotePlayerPrefab;
     static Dictionary<string, GameObject> remotePlayers = new Dictionary<string, GameObject>();
 
-    static Action<string> actionReceivedGamePlayers;
-    static Action<string> actionReceivedPlayerJoined;
-    static Action<string> actionReceivedPlayerLeft;
-    static Action<string> actionReceivedPlayerTransform;
+    Action<string> actionReceivedGamePlayers = new Action<string>(ReceivedGamePlayers);
+    Action<string> actionReceivedPlayerJoined = new Action<string>(ReceivedPlayerJoined);
+    Action<string> actionReceivedPlayerLeft = new Action<string>(ReceivedPlayerLeft);
+    Action<string> actionReceivedPlayerTransform = new Action<string>(ReceivedPlayerTransform);
 
-    void Awake () {
-        base.Awake();
-        instance.Init();
-    }
-    void Init() {
-        actionReceivedGamePlayers = new Action<string>(ReceivedGamePlayers);
-        actionReceivedPlayerJoined = new Action<string>(ReceivedPlayerJoined);
-        actionReceivedPlayerLeft = new Action<string>(ReceivedPlayerLeft);
-        actionReceivedPlayerTransform = new Action<string>(ReceivedPlayersTransform);
-
+    void OnEnable() {
         EventManager.StartListening("GAME_PLAYERS", actionReceivedGamePlayers);
         EventManager.StartListening("PLAYER_JOINED", actionReceivedPlayerJoined);
         EventManager.StartListening("PLAYER_LEFT", actionReceivedPlayerLeft);
         EventManager.StartListening("PLAYER_TRANSFORM", actionReceivedPlayerTransform);
+    }
+    void OnDisable() {
+        EventManager.StopListening("GAME_PLAYERS", actionReceivedGamePlayers);
+        EventManager.StopListening("PLAYER_JOINED", actionReceivedPlayerJoined);
+        EventManager.StopListening("PLAYER_LEFT", actionReceivedPlayerLeft);
+        EventManager.StopListening("PLAYER_TRANSFORM", actionReceivedPlayerTransform);
     }
 
     // --- Public --- 
@@ -37,22 +34,22 @@ public class NetworkRemotePlayersController : Singleton<NetworkRemotePlayersCont
         EventManager.TriggerEvent("UI:NAME", localPlayer.name);
     }
     // --- Network --- 
-    void ReceivedGamePlayers(string data) {
+    static void ReceivedGamePlayers(string data) {
         PlayerList playerList = JsonUtility.FromJson<PlayerList>(data);
         foreach (Player player in playerList.players) {
             AddPlayer(player);
         }
     }
 
-	void ReceivedPlayerJoined(string data) {
+	static void ReceivedPlayerJoined(string data) {
 	    AddPlayer(JsonUtility.FromJson<Player>(data));
 	}
 
-    void ReceivedPlayerLeft(string data) {
+    static void ReceivedPlayerLeft(string data) {
     	RemovePlayer(JsonUtility.FromJson<Player>(data));
 	}
 
-    void ReceivedPlayersTransform(string data) {
+    static void ReceivedPlayerTransform(string data) {
         PlayerTransform playerTransform = JsonUtility.FromJson<PlayerTransform>(data);
         SetRemotePlayerTransform(playerTransform);
     }
