@@ -6,8 +6,9 @@ using System.Threading;
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+
 // https://itq.nl/net-4-5-websocket-client-without-a-browser/
-public class WSConnection : MonoBehaviour {
+public class WSConnection : Singleton<WSConnection> {
     
     static string serverHost = "ws://localhost:9000/";
     static ClientWebSocket socket = new ClientWebSocket();
@@ -17,23 +18,9 @@ public class WSConnection : MonoBehaviour {
 
     static string[] ignoreActions = {"PLAYERS_TRANSFORM"};
 
-    // Singleton pattern ------- >
-    static WSConnection _instance;
-
-    public static WSConnection Instance { get { return _instance; } }
-
-    void Awake() {
-        if (_instance != null && _instance != this)
-        {
-            Destroy(this.gameObject);
-        } else {
-            _instance = this;
-        }
-    }
     static WSConnection() {
         WSConnection.Init();
     }
-    // < -------------------------
 
     void Update() {
         IncomingNetworkMessage msg = GetMessage();

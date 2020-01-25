@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NetworkRemotePlayersController : MonoBehaviour
+public class NetworkRemotePlayersController : Singleton<NetworkRemotePlayersController>
 {
     static Player localPlayer;
     [SerializeField]
@@ -11,24 +11,9 @@ public class NetworkRemotePlayersController : MonoBehaviour
     static Dictionary<string, Vector3> remotePlayersPositions = new Dictionary<string, Vector3>();
     static Dictionary<string, Vector3> remotePlayersRotations = new Dictionary<string, Vector3>();
 
-    // Singleton pattern ------- >
-    static NetworkRemotePlayersController _instance;
-
-    public static NetworkRemotePlayersController Instance { get { return _instance; } }
-
-    void Awake() {
-        if (_instance != null && _instance != this)
-        {
-            Destroy(this.gameObject);
-        } else {
-            _instance = this;
-        }
-    }
-    // < -------------------------
-
     public static void AddPlayer (Player player) {
         if (player.key != localPlayer.key) {
-            _instance.InstantiateRemotePlayer(player);
+            instance.InstantiateRemotePlayer(player);
         }
         EventManager.TriggerEvent("UI:PLAYERS", (remotePlayers.Count + 1).ToString());
     }

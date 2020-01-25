@@ -15,9 +15,11 @@ public class NetworkRemotePlayerTransform : MonoBehaviour
     private float startTimeRotation;
     private float journeyLength;
 
-    [SerializeField]
     // public float speed = 0.075F;  // seconds to move.
-    public float speed = 0.0F;  // seconds to move.
+    public float speed = 0.01F;  // seconds to move.
+    void OnValidate() {
+        speed = Mathf.Max(speed, 0.01F);
+    }
     void Start()
     {
         newTargetPosition = transform.position;

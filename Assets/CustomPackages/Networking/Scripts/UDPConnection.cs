@@ -8,35 +8,20 @@ using System.IO;
 using System.Collections.Generic;
 using System.Net;
 
-public class UDPConnection : MonoBehaviour
-{
+public class UDPConnection : Singleton<UDPConnection> {
     static string serverHost = "localhost";
     static int serverPort = 9000;
-
-    static UdpClient socket = new UdpClient(0);  // free port
-
-    static Queue<IncomingNetworkMessage> queue = new Queue<IncomingNetworkMessage>();
     public static bool init = false;
 
+    static UdpClient socket = new UdpClient(0);  // free port
+    static Queue<IncomingNetworkMessage> queue = new Queue<IncomingNetworkMessage>();
+
     static string[] ignoreActions = {"PLAYER_TRANSFORM"};
-    string disconnect_action = "disconnect";
-    // Singleton pattern ------- >
-    static UDPConnection _instance;
 
-    public static UDPConnection Instance { get { return _instance; } }
-
-    void Awake() {
-        if (_instance != null && _instance != this)
-        {
-            Destroy(this.gameObject);
-        } else {
-            _instance = this;
-        }
-    }
     static UDPConnection() {
         UDPConnection.Init();
     }
-    // < -------------------------
+
     static void Init() {
         socket.Connect(serverHost, serverPort);
         Thread oThread = new Thread(ReadSocket);

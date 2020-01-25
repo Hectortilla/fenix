@@ -37,7 +37,7 @@ public class NetworkEntity : MonoBehaviour
     IEnumerator Auth()
     {
         yield return new WaitUntil(() => UDPConnection.init);
-        string playerName = Utilities.GenerateName(4, 10);
+        string playerName = NameGenerator.GenerateName(4, 10);
         UDPConnection.Send(new AuthMessage(playerName));
     }
     void ReceivedAuth(string data) {
