@@ -12,10 +12,10 @@ public class NetworkTransform : MonoBehaviour
     NetworkEntity networkEntity;
 
     [SerializeField]
-    Transform positionTransform;
+    Transform positionTransform = null;
 
     [SerializeField]
-    Transform rotationTransform;
+    Transform rotationTransform = null;
 
     void Start()
     {

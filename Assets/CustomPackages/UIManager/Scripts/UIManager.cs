@@ -7,11 +7,11 @@ using System;
 public class UIManager : MonoBehaviour
 {
 	[SerializeField]
-	Text name;
+	Text playerName = null;
 	[SerializeField]
-	Text gameKey;
+	Text gameKey = null;
 	[SerializeField]
-	Text players;
+	Text numOfPlayers = null;
     
     Action<string> actionName;
     Action<string> actionGameKey;
@@ -33,10 +33,10 @@ public class UIManager : MonoBehaviour
         EventManager.StopListening("UI:PLAYERS", this.actionPlayers);
     }
     void ListenerName(string _name) {
-        name.text = "Name: " + _name;
+        playerName.text = "Name: " + _name;
     }
     void ListenerPlayers(string _players) {
-        players.text = "Players: " + _players;
+        numOfPlayers.text = "Players: " + _players;
     }
     void ListenerGameKey(string _gameKey) {
         gameKey.text = "Game: " + _gameKey;

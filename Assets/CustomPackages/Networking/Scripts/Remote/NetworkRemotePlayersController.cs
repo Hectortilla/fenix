@@ -7,7 +7,7 @@ public class NetworkRemotePlayersController : Singleton<NetworkRemotePlayersCont
 {
     static Player localPlayer;
     [SerializeField]
-    GameObject remotePlayerPrefab;
+    GameObject remotePlayerPrefab = null;
     static Dictionary<string, GameObject> remotePlayers = new Dictionary<string, GameObject>();
 
     Action<string> actionReceivedGamePlayers = new Action<string>(ReceivedGamePlayers);
