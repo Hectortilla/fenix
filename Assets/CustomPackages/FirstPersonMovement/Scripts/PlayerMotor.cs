@@ -4,7 +4,7 @@
 public class PlayerMotor : MonoBehaviour {
 
 	[SerializeField]
-	private Camera cam;
+	private Camera cam = null;
 
 	private Vector3 velocity = Vector3.zero;
 	private Vector3 rotation = Vector3.zero;

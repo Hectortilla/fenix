@@ -7,13 +7,13 @@ public class Inventory : MonoBehaviour {
     Item ItemOnHand;
     List<Item> items = new List<Item>();
     [SerializeField]
-    GameObject panelContainer;
+    GameObject panelContainer = null;
     [SerializeField]
-    GameObject InventorySlot;
+    GameObject InventorySlot = null;
     [SerializeField]
-    GameObject InventoryUI;
+    GameObject InventoryUI = null;
     [SerializeField]
-    Text descriptionText;
+    Text descriptionText = null;
 
     bool displaying = false;
     // Use this for initialization

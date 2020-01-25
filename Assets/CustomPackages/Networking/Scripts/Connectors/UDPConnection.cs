@@ -75,5 +75,7 @@ public class UDPConnection : Singleton<UDPConnection> {
     {
         Send(new DisconnectMessage());
         socket.Close();
+        base.OnDestroy();
+
     }
 }
