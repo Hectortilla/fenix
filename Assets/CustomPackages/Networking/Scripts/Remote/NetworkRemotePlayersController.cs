@@ -1,24 +1,67 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class NetworkRemotePlayersController : Singleton<NetworkRemotePlayersController>
 {
     static Player localPlayer;
     [SerializeField]
-    private GameObject remotePlayerPrefab;
+    GameObject remotePlayerPrefab;
     static Dictionary<string, GameObject> remotePlayers = new Dictionary<string, GameObject>();
-    static Dictionary<string, Vector3> remotePlayersPositions = new Dictionary<string, Vector3>();
-    static Dictionary<string, Vector3> remotePlayersRotations = new Dictionary<string, Vector3>();
 
-    public static void AddPlayer (Player player) {
+    static Action<string> actionReceivedGamePlayers;
+    static Action<string> actionReceivedPlayerJoined;
+    static Action<string> actionReceivedPlayerLeft;
+    static Action<string> actionReceivedPlayerTransform;
+
+    public NetworkRemotePlayersController () {
+        actionReceivedGamePlayers = new Action<string>(ReceivedGamePlayers);
+        actionReceivedPlayerJoined = new Action<string>(ReceivedPlayerJoined);
+        actionReceivedPlayerLeft = new Action<string>(ReceivedPlayerLeft);
+        actionReceivedPlayerTransform = new Action<string>(ReceivedPlayersTransform);
+
+        EventManager.StartListening("GAME_PLAYERS", actionReceivedGamePlayers);
+        EventManager.StartListening("PLAYER_JOINED", actionReceivedPlayerJoined);
+        EventManager.StartListening("PLAYER_LEFT", actionReceivedPlayerLeft);
+        EventManager.StartListening("PLAYER_TRANSFORM", actionReceivedPlayerTransform);
+    }
+
+    // --- Public --- 
+    public static void SetLocalPlayer (Player _localPlayer) {
+        localPlayer = _localPlayer;
+        EventManager.TriggerEvent("UI:NAME", localPlayer.name);
+    }
+    // --- Network --- 
+    void ReceivedGamePlayers(string data) {
+        PlayerList playerList = JsonUtility.FromJson<PlayerList>(data);
+        foreach (Player player in playerList.players) {
+            _AddPlayer(player);
+        }
+    }
+
+	void ReceivedPlayerJoined(string data) {
+	    _AddPlayer(JsonUtility.FromJson<Player>(data));
+	}
+
+    void ReceivedPlayerLeft(string data) {
+    	_RemovePlayer(JsonUtility.FromJson<Player>(data));
+	}
+
+    void ReceivedPlayersTransform(string data) {
+        PlayerTransform playerTransform = JsonUtility.FromJson<PlayerTransform>(data);
+        _SetRemotePlayerTransform(playerTransform);
+    }
+
+    // --- Private --- 
+    static void _AddPlayer (Player player) {
         if (player.key != localPlayer.key) {
-            instance.InstantiateRemotePlayer(player);
+            instance._InstantiateRemotePlayer(player);
         }
         EventManager.TriggerEvent("UI:PLAYERS", (remotePlayers.Count + 1).ToString());
     }
     
-    public static void RemovePlayer (Player player) {
+    static void _RemovePlayer (Player player) {
         GameObject remotePlayer = null;
         if(remotePlayers.TryGetValue(player.key, out remotePlayer))
         {
@@ -28,29 +71,13 @@ public class NetworkRemotePlayersController : Singleton<NetworkRemotePlayersCont
         EventManager.TriggerEvent("UI:PLAYERS", (remotePlayers.Count + 1).ToString());
     }
 
-    public static void SetLocalPlayer (Player _localPlayer) {
-        localPlayer = _localPlayer;
-        EventManager.TriggerEvent("UI:NAME", localPlayer.name);
-    }
-
-    public void InstantiateRemotePlayer (Player rempotePlayer) {
+    void _InstantiateRemotePlayer (Player rempotePlayer) {
         GameObject remotePlayerGO = Instantiate(remotePlayerPrefab);
         remotePlayerGO.AddComponent<NetworkRemotePlayerTransform>();
         remotePlayers.Add(rempotePlayer.key, remotePlayerGO);
 
     }
-    /*
-    public static void MovePlayer (PlayerTransform playerTransform) {
-        GameObject remotePlayer = null;
-        if(remotePlayers.TryGetValue(playerTransform.key, out remotePlayer))
-        {
-            GameObject remotePlayerGO = remotePlayers[playerTransform.key];
-            remotePlayerGO.transform.position = new Vector3(playerTransform.px, playerTransform.py, playerTransform.pz);
-            remotePlayerGO.transform.rotation = Quaternion.Euler(new Vector3(playerTransform.rx, playerTransform.ry, playerTransform.rz));
-        }
-    }
-    */
-    public static void SetRemotePlayerTransform (PlayerTransform playerTransform) {
+    static void _SetRemotePlayerTransform (PlayerTransform playerTransform) {
         GameObject remotePlayer = null;
         if(remotePlayers.TryGetValue(playerTransform.key, out remotePlayer))
         {
