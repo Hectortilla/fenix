@@ -71,7 +71,7 @@ public class WSConnection : Singleton<WSConnection> {
         } while (true);
     }
 
-    async static public void SendMessage(string action, object data) {
+    async static public void Send(string action, object data) {
         if (init) {
             byte[] sendBytes = Encoding.UTF8.GetBytes(JsonUtility.ToJson(new OutgoingNetworkMessage(action, JsonUtility.ToJson(data))));
             var sendBuffer = new ArraySegment<byte>(sendBytes);
