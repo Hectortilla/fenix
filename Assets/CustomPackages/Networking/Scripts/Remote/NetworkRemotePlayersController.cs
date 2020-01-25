@@ -36,32 +36,32 @@ public class NetworkRemotePlayersController : Singleton<NetworkRemotePlayersCont
     void ReceivedGamePlayers(string data) {
         PlayerList playerList = JsonUtility.FromJson<PlayerList>(data);
         foreach (Player player in playerList.players) {
-            _AddPlayer(player);
+            AddPlayer(player);
         }
     }
 
 	void ReceivedPlayerJoined(string data) {
-	    _AddPlayer(JsonUtility.FromJson<Player>(data));
+	    AddPlayer(JsonUtility.FromJson<Player>(data));
 	}
 
     void ReceivedPlayerLeft(string data) {
-    	_RemovePlayer(JsonUtility.FromJson<Player>(data));
+    	RemovePlayer(JsonUtility.FromJson<Player>(data));
 	}
 
     void ReceivedPlayersTransform(string data) {
         PlayerTransform playerTransform = JsonUtility.FromJson<PlayerTransform>(data);
-        _SetRemotePlayerTransform(playerTransform);
+        SetRemotePlayerTransform(playerTransform);
     }
 
     // --- Private --- 
-    static void _AddPlayer (Player player) {
+    static void AddPlayer (Player player) {
         if (player.key != localPlayer.key) {
-            instance._InstantiateRemotePlayer(player);
+            instance.InstantiateRemotePlayer(player);
         }
         EventManager.TriggerEvent("UI:PLAYERS", (remotePlayers.Count + 1).ToString());
     }
     
-    static void _RemovePlayer (Player player) {
+    static void RemovePlayer (Player player) {
         GameObject remotePlayer = null;
         if(remotePlayers.TryGetValue(player.key, out remotePlayer))
         {
@@ -71,13 +71,13 @@ public class NetworkRemotePlayersController : Singleton<NetworkRemotePlayersCont
         EventManager.TriggerEvent("UI:PLAYERS", (remotePlayers.Count + 1).ToString());
     }
 
-    void _InstantiateRemotePlayer (Player rempotePlayer) {
+    void InstantiateRemotePlayer (Player rempotePlayer) {
         GameObject remotePlayerGO = Instantiate(remotePlayerPrefab);
         remotePlayerGO.AddComponent<NetworkRemotePlayerTransform>();
         remotePlayers.Add(rempotePlayer.key, remotePlayerGO);
 
     }
-    static void _SetRemotePlayerTransform (PlayerTransform playerTransform) {
+    static void SetRemotePlayerTransform (PlayerTransform playerTransform) {
         GameObject remotePlayer = null;
         if(remotePlayers.TryGetValue(playerTransform.key, out remotePlayer))
         {
