@@ -18,7 +18,8 @@ public class WSConnection : Singleton<WSConnection> {
 
     static string[] ignoreActions = {"PLAYERS_TRANSFORM"};
 
-    static WSConnection() {
+    void Awake() {
+        base.Awake();
         WSConnection.Init();
     }
 

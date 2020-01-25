@@ -4,26 +4,22 @@ using UnityEngine;
 
 public class NetworkRemotePlayerTransform : MonoBehaviour
 {
-    public Vector3 newTargetPosition;
-    public Quaternion newTargetRotation;
     Vector3 startPosition;
     Quaternion startRotation;
     Vector3 targetPosition;
     Quaternion targetRotation;
 
-    private float startTimePosition;
-    private float startTimeRotation;
-    private float journeyLength;
+    float startTimePosition;
+    float startTimeRotation;
 
-    // public float speed = 0.075F;  // seconds to move.
-    public float speed = 0.01F;  // seconds to move.
+    float interpolateSpeed = 0.01F; // 0.075F // seconds to move.
+
     void OnValidate() {
-        speed = Mathf.Max(speed, 0.01F);
+        interpolateSpeed = Mathf.Max(interpolateSpeed, 0.01F);
     }
+
     void Start()
     {
-        newTargetPosition = transform.position;
-        newTargetRotation = transform.rotation;
         targetPosition = transform.position;
         targetRotation = transform.rotation;
     }
@@ -31,26 +27,27 @@ public class NetworkRemotePlayerTransform : MonoBehaviour
         InterpolatePosition();
         InterpolateRotation();
     }
-
-    void InterpolatePosition() {
-        if (newTargetPosition != targetPosition) {
-            targetPosition = newTargetPosition;
+    public void SetPosition(Vector3 pos){
+        if (pos != targetPosition) {
+            targetPosition = pos;
             startPosition = transform.position;
             startTimePosition = Time.time;
         }
-        float fractionOfJourney = (Time.time - startTimePosition) / speed;
-        transform.position = Vector3.Lerp(startPosition, targetPosition, fractionOfJourney);
     }
-    void InterpolateRotation() {
-        if (newTargetRotation != targetRotation) {
-            targetRotation = newTargetRotation;
+    public void SetRotation(Quaternion rot){
+        if (rot != targetRotation) {
+            targetRotation = rot;
             startRotation = transform.rotation;
             startTimeRotation = Time.time;
         }
-        float fractionOfJourney = (Time.time - startTimeRotation) / speed;
-
+    }
+    void InterpolatePosition() {
+        float fractionOfJourney = (Time.time - startTimePosition) / interpolateSpeed;
+        transform.position = Vector3.Lerp(startPosition, targetPosition, fractionOfJourney);
+    }
+    void InterpolateRotation() {
+        float fractionOfJourney = (Time.time - startTimeRotation) / interpolateSpeed;
         transform.rotation = Quaternion.Slerp(startRotation, targetRotation, fractionOfJourney);
-        // transform.rotation = Quaternion.Euler(Vector3.Lerp(startRotation, targetRotation, fractionOfJourney));
     }
 
 }

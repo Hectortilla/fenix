@@ -18,7 +18,8 @@ public class UDPConnection : Singleton<UDPConnection> {
 
     static string[] ignoreActions = {"PLAYER_TRANSFORM"};
 
-    static UDPConnection() {
+    void Awake() {
+        base.Awake();
         UDPConnection.Init();
     }
 
@@ -33,9 +34,9 @@ public class UDPConnection : Singleton<UDPConnection> {
     void Update() {
         IncomingNetworkMessage msg = GetMessage();
         while(msg != null) {
-            if (Array.IndexOf(ignoreActions, msg.action) == -1) {
-                Debug.Log("Triggering ---> " + msg.action + " --- DATA:  " + msg.data);
-            }
+            // if (Array.IndexOf(ignoreActions, msg.action) == -1) {
+            //     Debug.Log("Triggering ---> " + msg.action + " --- DATA:  " + msg.data);
+            // }
             EventManager.TriggerEvent(msg.action, msg.data);
             msg = GetMessage();
         }
